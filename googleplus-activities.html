@@ -31,7 +31,7 @@
       // The provided key works for this sample only when run from
       // https://google-api-javascript-client.googlecode.com/hg/samples/authSample.html
       // To use in your own application, replace this API key with your own.
-      var apiKey = '';
+      var apiKey = 'AIzaSyAdVh37_tuxYEMDC9yTu2zrkhttly_zhcs';
 
       // Use a button to handle authentication the first time.
       function handleClientLoad() {
@@ -43,9 +43,26 @@
       function makeApiCall() {
         gapi.client.load('plus', 'v1', function() {
           var request = gapi.client.plus.people.get({
-            'userId': ''
+            'userId': '108086881826934773478'
             // For instance: 
             // 'userId': '+GregorioRobles'
+          });
+          var activities = gapi.client.plus.activities.list({
+            'userId': '108086881826934773478',
+            'collection': 'public'
+          });
+          activities.execute(function(resp){
+              var list = document.createElement('ul');  
+              var elem;
+              resp.items.forEach(function(data) {
+                elem = document.createElement('li');
+                elem.innerHTML = data.title + ' ' + '<a href="' + data.url + '">Link</a>';
+                list.appendChild(elem); 
+                if(data.location)
+                  elem.innerHTML += '<p>Location: ' + data.location.position.latitude + ' ' + data.location.position.longitude 
+                  + '</p>';
+              });
+              document.getElementById('content').appendChild(list);
           });
           request.execute(function(resp) {
             var heading = document.createElement('h4');
@@ -62,5 +79,6 @@
     <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
     <div id="content"></div>
     <p>Retrieves your profile name (and picture) using the Google Plus API.</p>
+    <div id="activity"></div>
   </body>
 </html>
